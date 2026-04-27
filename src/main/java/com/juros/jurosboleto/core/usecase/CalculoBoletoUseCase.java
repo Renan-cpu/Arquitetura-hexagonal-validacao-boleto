@@ -8,25 +8,22 @@ import com.juros.jurosboleto.core.exception.ApplicationException;
 import com.juros.jurosboleto.core.port.in.CalculoBoletoPort;
 import com.juros.jurosboleto.core.port.out.ComplementoBoletoPort;
 import com.juros.jurosboleto.core.port.out.SalvarCalculoBoletoPort;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+@Service
+@RequiredArgsConstructor
 public class CalculoBoletoUseCase implements CalculoBoletoPort {
 
     private static final BigDecimal JUROS_DIARIO = BigDecimal.valueOf(0.033);
 
-    @Autowired
-    BoletoCalculado boletoCalculado;
-
-    @Autowired
-    ComplementoBoletoPort complementoBoletoPort;
-
-    @Autowired
-    SalvarCalculoBoletoPort salvarCalculoBoletoPort;
+    private final ComplementoBoletoPort complementoBoletoPort;
+    private final SalvarCalculoBoletoPort salvarCalculoBoletoPort;
 
     @Override
     public BoletoCalculado executar(String codigo, LocalDate dataPagamento) {
@@ -36,7 +33,7 @@ public class CalculoBoletoUseCase implements CalculoBoletoPort {
         var diasVencido = getDiasVencimento(boleto.getDataVencimento(), dataPagamento);
         var jurosBoleto = JUROS_DIARIO.multiply(boleto.getValor()).multiply(BigDecimal.valueOf(diasVencido)).setScale(2, RoundingMode.HALF_EVEN);
 
-        BoletoCalculado.builder()
+        BoletoCalculado boletoCalculado = BoletoCalculado.builder()
                 .codigo(boleto.getCodigo())
                 .dataPagamento(dataPagamento)
                 .dataVencimento(boleto.getDataVencimento())
@@ -47,7 +44,6 @@ public class CalculoBoletoUseCase implements CalculoBoletoPort {
                 .build();
 
         salvarCalculoBoletoPort.executar(boletoCalculado);
-
 
         return boletoCalculado;
     }
