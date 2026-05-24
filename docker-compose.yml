@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: jurosboleto-postgres
+    environment:
+      POSTGRES_DB: jurosboleto
+      POSTGRES_USER: juros
+      POSTGRES_PASSWORD: juros
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
