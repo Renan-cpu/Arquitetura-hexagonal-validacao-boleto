@@ -2,6 +2,7 @@ package com.juros.jurosboleto.core.usecase;
 
 import com.juros.jurosboleto.core.domain.Boleto;
 import com.juros.jurosboleto.core.domain.BoletoCalculado;
+import com.juros.jurosboleto.core.domain.enums.TipoBoleto;
 import com.juros.jurosboleto.core.domain.enums.TipoExecao;
 import com.juros.jurosboleto.core.exception.ApplicationExeption;
 import com.juros.jurosboleto.core.port.in.CalculoBoletoPort;
@@ -43,15 +44,15 @@ public class CalcularBoleto implements CalculoBoletoPort {
                 .dataPagamento(dataPagamento)
                 .valorOriginal(boleto.getValor())
                 .juros(valorJuros)
-                .valorComJuros(boleto.getValor().add(valorJuros))
-                .tipoBoleto(boleto.getTipo())
+                .valor(boleto.getValor().add(valorJuros))
+                .tipo(boleto.getTipo())
                 .build();
 
         //Salvar boleto
         salvarCalculoBoletoPort.executar(boletoCalculado);
 
 
-        return null;
+        return boletoCalculado;
     }
 
 
@@ -60,7 +61,7 @@ public class CalcularBoleto implements CalculoBoletoPort {
             throw new ApplicationExeption(TipoExecao.BOLETO_INVALIDO);
         }
 
-        if(boleto.getTipo() == null){
+        if(boleto.getTipo() != TipoBoleto.XPTO){
             throw new ApplicationExeption(TipoExecao.TIPO_BOLETO_INVALIDO);
         }
 
