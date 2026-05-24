@@ -110,7 +110,7 @@ spring.jpa.hibernate.ddl-auto=update
 ### Comandos
 
 ```bash
-# Compilar e executar todos os testes
+# Compilar e CalculoBoletoPort todos os testes
 mvn clean install
 
 # Subir a aplicação
